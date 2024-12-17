@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 //Create schema
 const AuditionSchema = new mongoose.Schema({
     role_name: {type: String, required: true},
-    location: {type: String},
+    location: {type: String, required: true},
     age_range: {type: String},
     gender: {type: String},
     union_status: {type: Boolean},
