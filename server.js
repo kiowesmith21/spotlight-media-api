@@ -15,6 +15,7 @@ app.use(express.json());
 
 //Routes
 app.use('/api/auditions', require('./routes/auditions'));
+app.use('/api/crew-jobs', require('./routes/crewJobs'));
 
 const PORT = process.env.PORT || 5000;
 
