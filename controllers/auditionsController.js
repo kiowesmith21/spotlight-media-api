@@ -5,10 +5,9 @@ const Audition = require('../models/Audition');
 //get auditions
 const getAuditions = async (req, res) => {
     try {
-      const { location, role } = req.query;
+      const { location } = req.query;
       const filters = {};
       if (location) filters.location = location; //if given query params
-      if (role) filters.role = role;
   
       const auditions = await Audition.find(filters); //get and filter within constraints of given params
       res.status(200).json(auditions);
