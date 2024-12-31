@@ -19,7 +19,7 @@ async function getJobLinks(url) {
 async function getJobDetails(jobUrl) {
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
-  await page.goto(jobUrl, { waitUntil: 'domcontentloaded' });
+  await page.goto(jobUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
 
   await page.waitForSelector('ul.font-semibold');
 
