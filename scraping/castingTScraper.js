@@ -60,6 +60,7 @@ async function getJobDetails(jobUrl) {
       };
   });
 
+  jobDetails.link = jobUrl;
   await browser.close();
   return jobDetails;
 }

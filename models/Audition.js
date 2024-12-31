@@ -11,6 +11,7 @@ const AuditionSchema = new mongoose.Schema({
     category: {type: String},
     location: {type: String},
     source: {type: String},
+    link: { type: String, required: true },
 });
 
 //export the model
