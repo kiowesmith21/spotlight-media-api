@@ -4,6 +4,7 @@ const Audition = require('../models/Audition');
 const exploreTalentScraper = require('./exploreTalentScraper');
 const castingTScraper = require('./castingTScraper');
 
+//UN-COMMENT WHEN ADDING TO DB
 // const mongoose = require('mongoose');
 
 // //load environment variables
@@ -30,9 +31,21 @@ async function scrapeAndSaveJobs() {
     // }
 
     // Scrape from CastingT
-    const castingTLinks = await castingTScraper.getJobLinks('https://castingt.com/auditions');
-    for (const link of castingTLinks) {
-        const jobDetails = await castingTScraper.getJobDetails(link);
+    // const castingTLinks = await castingTScraper.getJobLinks('https://castingt.com/auditions');
+    // for (const link of castingTLinks) {
+    //     const jobDetails = await castingTScraper.getJobDetails(link);
+    //     //TESTING
+    //     const newAudition = new Audition(jobDetails);
+    //     await newAudition.save();
+    //     // console.log(`Saved job from CastingT: ${jobDetails.title}`);
+    //     //TESTING
+    //     // console.log('saved details: ', jobDetails);
+    // }
+
+    // Scrape from Playbill
+    const playBillLinks = await playBillScraper.getJobLinks();
+    for (const link of playBillLinks) {
+        const jobDetails = await playBillScraper.getJobDetails(link);
         //TESTING
         // const newAudition = new Audition(jobDetails);
         // await newAudition.save();
@@ -41,14 +54,11 @@ async function scrapeAndSaveJobs() {
         console.log('saved details: ', jobDetails);
     }
 
-    // Scrape from Site 3
-    
-
     //scrape from more websites if desired...
 
   }
   
 // Testing with a URL (replace with the actual URL you want to scrape)
-scrapeAndSaveJobs('https://www.exploretalent.com/auditions/all-jobs')
+scrapeAndSaveJobs()
 .then(() => console.log('Job scraping and saving complete'))
 .catch((err) => console.error('Error scraping and saving jobs:', err));
