@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 function RegistrationPage() {
   const [formData, setFormData] = useState({
-    username: '',
     email: '',
     password: '',
   });
@@ -26,20 +25,6 @@ function RegistrationPage() {
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-center mb-4">Create an Account</h2>
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              className="mt-2 p-2 w-full border border-gray-300 rounded-md"
-              required
-            />
-          </div>
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
