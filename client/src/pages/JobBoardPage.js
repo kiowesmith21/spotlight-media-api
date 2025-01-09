@@ -1,23 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import StateDropdown from '../components/StateDropdown';
 
 function JobBoardPage() {
-  // Hardcoded job data (name, description, location)
-  const jobs = [
-    { id: 1, title: 'Software Engineer', location: 'New York, NY', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
-    { id: 2, title: 'Frontend Developer', location: 'San Francisco, CA', description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' },
-    { id: 3, title: 'Backend Developer', location: 'Austin, TX', description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.' },
-    { id: 4, title: 'Full Stack Developer', location: 'Los Angeles, CA', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.' },
-    { id: 5, title: 'Product Manager', location: 'Chicago, IL', description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' },
-    { id: 6, title: 'Data Scientist', location: 'Boston, MA', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
-    { id: 7, title: 'UX/UI Designer', location: 'Miami, FL', description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.' },
-    { id: 8, title: 'Project Manager', location: 'Seattle, WA', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.' },
-    // Add more jobs as needed
-  ];
+  // // Hardcoded job data (name, description, location)
+  // const jobs = [
+  //   { id: 1, title: 'Software Engineer', location: 'New York, NY', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+  //   { id: 2, title: 'Frontend Developer', location: 'San Francisco, CA', description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' },
+  //   { id: 3, title: 'Backend Developer', location: 'Austin, TX', description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.' },
+  //   { id: 4, title: 'Full Stack Developer', location: 'Los Angeles, CA', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.' },
+  //   { id: 5, title: 'Product Manager', location: 'Chicago, IL', description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' },
+  //   { id: 6, title: 'Data Scientist', location: 'Boston, MA', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+  //   { id: 7, title: 'UX/UI Designer', location: 'Miami, FL', description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.' },
+  //   { id: 8, title: 'Project Manager', location: 'Seattle, WA', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.' },
+  //   // Add more jobs as needed
+  // ];
 
-  // Pagination setup
-  const jobsPerPage = 3;  // Number of jobs per page
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  //CALL API
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/auditions');
+        if (!response.ok) {
+          throw new Error('Failed to fetch jobs');
+        }
+        const data = await response.json();
+        setJobs(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  // PAGINATION setup
+  const jobsPerPage = 10;  // Number of jobs per page
   const [currentPage, setCurrentPage] = useState(1);
 
   // Calculate total pages
@@ -32,6 +56,10 @@ function JobBoardPage() {
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+
+  //handle load time and errors
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="w-full">
@@ -50,12 +78,12 @@ function JobBoardPage() {
                 <Link to="/job-board" className="inline-flex justify-center w-1/6 p-2 text-xs font-xs text-center bg-black text-white rounded-full">
                   {job.location}
                 </Link>
-                <a href="#">
+                <a href={job.link} target="_blank">
                   <h1 className="text-2xl font-bold my-5 hover:text-blue-500">{job.title}</h1>
                 </a>
                 <p>{job.description}</p>
               </div>
-              <a href="#" className="m-auto inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center bg-blue-500 text-white border border-gray-300 rounded-lg hover:bg-blue-800">
+              <a href={job.link} target="_blank" className="m-auto inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center bg-blue-500 text-white border border-gray-300 rounded-lg hover:bg-blue-800">
                 View Job
               </a>
             </div>
