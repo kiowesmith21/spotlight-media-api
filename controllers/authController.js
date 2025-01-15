@@ -44,4 +44,38 @@ const getUserProfile = async (req, res) => {
     }
 };
 
-module.exports = { register, login, getUserProfile };
+const saveJobForUser = async (req, res) => {
+    try {
+        const { jobId } = req.body; // Only need the jobId from the request body
+        const user = await User.findById(req.userId); // Use req.userId from the middleware
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (!user.savedJobs.includes(jobId)) {
+            user.savedJobs.push(jobId);
+            await user.save();
+            res.status(201).json({ message: 'Job saved successfully' });
+        } else {
+            res.status(400).json({ message: 'Job already saved' });
+        }
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+const getUserSavedJobs = async (req, res) => {
+    try {
+        const user = await User.findById(req.userId).populate('savedJobs'); // Use req.userId
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(user.savedJobs);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+
+module.exports = { register, login, getUserProfile, saveJobForUser, getUserSavedJobs };

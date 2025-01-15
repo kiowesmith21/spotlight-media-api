@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, getUserProfile } = require('../controllers/authController');
+const { register, login, getUserProfile, saveJobForUser, getUserSavedJobs } = require('../controllers/authController');
 const { authenticateJWT } = require('../middleware/authMiddleware');
 
 // /api/auth
@@ -13,5 +13,11 @@ router.post('/login', login);
 
 //protected GET User profile
 router.get('/profile', authenticateJWT, getUserProfile);
+
+//POST save a job for user
+router.post('/saveJobForUser', authenticateJWT, saveJobForUser);  
+
+//GET all saved jobs for user
+router.get('/getUserSavedJobs', authenticateJWT, getUserSavedJobs);
 
 module.exports = router;
