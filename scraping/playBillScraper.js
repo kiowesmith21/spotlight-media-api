@@ -49,7 +49,20 @@ async function getJobDetails(jobUrl) {
     details.rate = rate;
 
     //get the location
-    details.location = document.querySelector('div.jobs-detail section p').textContent.trim();
+    // Scrape the location text
+    let locationText = document.querySelector('div.jobs-detail section p').textContent.trim();
+
+    // Add a comma if one is missing
+    if (!locationText.includes(',')) {
+        let parts = locationText.split(' ');
+        if (parts.length >= 2) {
+            // Assume the last part is the country and add a comma before it
+            locationText = parts.slice(0, -1).join(' ') + ', ' + parts[parts.length - 1];
+        }
+    }
+
+    details.location = locationText;
+
 
     const title = document.querySelector('h2.jobs-page-title')?.textContent.trim() || 'No title';
 

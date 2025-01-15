@@ -3,24 +3,12 @@ import { Link } from 'react-router-dom';
 import StateDropdown from '../components/StateDropdown';
 
 function JobBoardPage() {
-  // // Hardcoded job data (name, description, location)
-  // const jobs = [
-  //   { id: 1, title: 'Software Engineer', location: 'New York, NY', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
-  //   { id: 2, title: 'Frontend Developer', location: 'San Francisco, CA', description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' },
-  //   { id: 3, title: 'Backend Developer', location: 'Austin, TX', description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.' },
-  //   { id: 4, title: 'Full Stack Developer', location: 'Los Angeles, CA', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.' },
-  //   { id: 5, title: 'Product Manager', location: 'Chicago, IL', description: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' },
-  //   { id: 6, title: 'Data Scientist', location: 'Boston, MA', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
-  //   { id: 7, title: 'UX/UI Designer', location: 'Miami, FL', description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.' },
-  //   { id: 8, title: 'Project Manager', location: 'Seattle, WA', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.' },
-  //   // Add more jobs as needed
-  // ];
-
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedState, setSelectedState] = useState('');  // State to track the selected state
 
-  //CALL API
+  // Call API to fetch jobs
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -40,24 +28,37 @@ function JobBoardPage() {
     fetchJobs();
   }, []);
 
-  // PAGINATION setup
-  const jobsPerPage = 10;  // Number of jobs per page
+  // Handle the state selection
+  const handleStateChange = (state) => {
+    setSelectedState(state);
+  };
+
+  // Filter jobs by selected state
+  const filteredJobs = selectedState
+    ? jobs.filter((job) => {
+        const state = job.location.split(',')[1]?.trim().split(' ')[0]; // Extract the state code from location
+        return state === selectedState;
+      })
+    : jobs;
+
+  // Pagination setup
+  const jobsPerPage = 10; // Number of jobs per page
   const [currentPage, setCurrentPage] = useState(1);
 
   // Calculate total pages
-  const totalPages = Math.ceil(jobs.length / jobsPerPage);
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
   // Get the current jobs based on the current page
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = jobs.slice(indexOfFirstJob, indexOfLastJob);
+  const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
 
   // Handle page change
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  //handle load time and errors
+  // Handle load time and errors
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -66,8 +67,7 @@ function JobBoardPage() {
       <div className="flex flex-col">
         {/* Location dropdown and Union button */}
         <div className="flex flex-col md:flex-row items-center justify-center p-10">
-          <StateDropdown />
-          <button className="ml-10 text-black bg-white p-4 border rounded-3xl hover:bg-slate-200">Union</button>
+          <StateDropdown onStateChange={handleStateChange} /> {/* Pass handleStateChange to the dropdown */}
         </div>
 
         {/* Job cards */}
@@ -75,7 +75,7 @@ function JobBoardPage() {
           {currentJobs.map((job) => (
             <div key={job.id} className="flex flex-col md:flex-row bg-white border border-gray-200 shadow rounded-3xl p-8 w-3/4 items-center mb-4">
               <div className="flex flex-col w-3/4">
-                <Link to="/job-board" className="inline-flex justify-center w-1/6 p-2 text-xs font-xs text-center bg-black text-white rounded-full">
+                <Link to="/job-board" className="inline-flex justify-center max-w-fit p-2 text-xs font-xs text-center bg-black text-white rounded-full">
                   {job.location}
                 </Link>
                 <a href={job.link} target="_blank">
@@ -123,7 +123,6 @@ function JobBoardPage() {
             Next
           </button>
         </div>
-
       </div>
     </div>
   );

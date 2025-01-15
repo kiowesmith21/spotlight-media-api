@@ -5,6 +5,7 @@ function LoginPage() {
     email: '',
     password: '',
   });
+  const [error, setError] = useState(null); // To display any error messages
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -14,16 +15,49 @@ function LoginPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic (e.g., sending form data to an API)
-    console.log('Form submitted:', formData);
+
+    const { email, password } = formData;
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Login failed');
+      }
+
+      const data = await response.json();
+      console.log('Login successful:', data);
+      
+      // Store the JWT token in localStorage (or cookies)
+      localStorage.setItem('token', data.token);
+
+      // Redirect to job board
+      window.location.href = '/job-board';
+    } catch (err) {
+      setError(err.message);
+      console.error('Login error:', err);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-center mb-4">Log In</h2>
+        
+        {error && <div className="text-red-500 text-center mb-4">{error}</div>} {/* Show error message */}
+
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">

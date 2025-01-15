@@ -5,11 +5,11 @@ const User = require('../models/User');
 //register User
 const register = async (req, res) => {
     try {
-        const { email, password, role, name } = req.body;
+        const { email, password, role, fullName } = req.body;
         const userExists = await User.findOne({ email });
         if (userExists) return res.status(400).json({ message: 'User already exists'});
 
-        const newUser = new User({ email, password, role, name});
+        const newUser = new User({ email, password, role, fullName});
         await newUser.save(); // save the new user using the .save() from the User schema
         res.status(201).json({ message: 'User registered successfully' });
     } catch (err) {
