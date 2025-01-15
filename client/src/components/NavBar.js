@@ -6,7 +6,7 @@ function NavBar() {
     <nav className="flex justify-between items-center py-3 bg-white border-b shadow text-black px-10 font-bold">
       {/* Left side links */}
       <div className="flex space-x-4 items-center">
-        <Link to="/" className="text-black text-3xl">Spot<span class="text-yellow-300">Light</span></Link>
+        <Link to="/" className="text-black text-3xl">Spot<span className="text-yellow-300">Light</span></Link>
         <Link to="/profile" className="hover:text-gray-400 px-10">Profile</Link>
         <Link to="/job-board" className="hover:text-gray-400">Find Jobs</Link>
       </div>
