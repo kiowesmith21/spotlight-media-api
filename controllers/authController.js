@@ -5,11 +5,11 @@ const User = require('../models/User');
 //register User
 const register = async (req, res) => {
     try {
-        const { email, password, role } = req.body;
+        const { email, password, role, name } = req.body;
         const userExists = await User.findOne({ email });
         if (userExists) return res.status(400).json({ message: 'User already exists'});
 
-        const newUser = new User({ email, password, role});
+        const newUser = new User({ email, password, role, name});
         await newUser.save(); // save the new user using the .save() from the User schema
         res.status(201).json({ message: 'User registered successfully' });
     } catch (err) {
@@ -77,5 +77,78 @@ const getUserSavedJobs = async (req, res) => {
     }
 };
 
+const updateUserName = async (req, res) => {
+    try {
+        const { name } = req.body; // Get the new name from the request body
+        if (!name) {
+            return res.status(400).json({ message: 'Name is required' });
+        }
 
-module.exports = { register, login, getUserProfile, saveJobForUser, getUserSavedJobs };
+        const user = await User.findById(req.userId); // Get user by ID from middleware
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.name = name; // Update the name
+        await user.save(); // Save changes to the database
+
+        res.status(200).json({ message: 'Name updated successfully', name: user.name });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+const updateUserBio = async (req, res) => {
+    try {
+        const { bio } = req.body;
+        if (!bio) {
+            return res.status(400).json({ message: 'Bio is required' });
+        }
+
+        const user = await User.findById(req.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.bio = bio;
+        await user.save();
+
+        res.status(200).json({ message: 'Bio updated successfully', bio: user.bio });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+const updateUserLocation = async (req, res) => {
+    try {
+        const { location } = req.body;
+        if (!location) {
+            return res.status(400).json({ message: 'Location is required' });
+        }
+
+        const user = await User.findById(req.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.location = location;
+        await user.save();
+
+        res.status(200).json({ message: 'Location updated successfully', location: user.location });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+
+
+module.exports = { 
+    register,
+    login, 
+    getUserProfile, 
+    saveJobForUser, 
+    getUserSavedJobs,
+    updateUserName,
+    updateUserBio,
+    updateUserLocation
+};
