@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react'; 
 import { Link } from 'react-router-dom';
 import StateDropdown from '../components/StateDropdown';
+import UserContext from '../config/UserContext';
 
 function JobBoardPage() {
+  const { updateSavedJobs } = useContext(UserContext);
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -58,6 +60,62 @@ function JobBoardPage() {
     setCurrentPage(pageNumber);
   };
 
+  // saveJob function with added fetch for job details after saving
+const saveJob = async (jobId) => {
+  const token = localStorage.getItem('token'); // Assuming you store the token in localStorage
+
+  if (!token) {
+    alert('Please log in to save a job.');
+    return;
+  }
+
+  try {
+    // Save the job by calling the saveJobForUser endpoint
+    const response = await fetch('http://localhost:5000/api/auth/saveJobForUser', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ jobId }), // Send the jobId in the body
+    });
+
+    if (!response.ok) {
+      // If the response status is 400 (Job already saved), handle it specifically
+      if (response.status === 400) {
+        const errorData = await response.json();
+        console.log(errorData.message); // Logs 'Job already saved'
+        alert(errorData.message); // Optionally, show an alert with the message
+      } else {
+        throw new Error('Failed to save job');
+      }
+      return;
+    }
+
+    // Get the job details by calling getJobById with the jobId
+    const jobDetailsResponse = await fetch(`http://localhost:5000/api/auditions/${jobId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!jobDetailsResponse.ok) {
+      throw new Error('Failed to fetch job details');
+    }
+
+    const jobDetails = await jobDetailsResponse.json();
+    
+    // Update the saved jobs in the context with the full job details
+    updateSavedJobs(jobDetails); // Assuming updateSavedJobs expects the full job object
+
+    alert('Job saved successfully!');
+  } catch (err) {
+    console.error('Error saving job:', err);
+    alert('Error saving job.');
+  }
+};
+
+
   // Handle load time and errors
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -86,6 +144,13 @@ function JobBoardPage() {
               <a href={job.link} target="_blank" className="m-auto inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center bg-blue-500 text-white border border-gray-300 rounded-lg hover:bg-blue-800">
                 View Job
               </a>
+              {/* Save Job Button */}
+              <button
+                onClick={() => saveJob(job._id)} // Call the saveJob function on button click
+                className="mt-4 px-5 py-2 text-base font-medium text-center bg-green-500 text-white border border-gray-300 rounded-lg hover:bg-green-700"
+              >
+                Save Job
+              </button>
             </div>
           ))}
         </div>
