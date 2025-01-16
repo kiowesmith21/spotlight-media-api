@@ -106,12 +106,11 @@ const saveJob = async (jobId) => {
     const jobDetails = await jobDetailsResponse.json();
     
     // Update the saved jobs in the context with the full job details
-    updateSavedJobs(jobDetails); // Assuming updateSavedJobs expects the full job object
+    updateSavedJobs(jobDetails); 
 
     alert('Job saved successfully!');
   } catch (err) {
     console.error('Error saving job:', err);
-    alert('Error saving job.');
   }
 };
 

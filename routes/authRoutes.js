@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, getUserProfile, saveJobForUser, getUserSavedJobs, updateUserName, updateUserBio, updateUserLocation } = require('../controllers/authController');
+const { register, login, getUserProfile, saveJobForUser, getUserSavedJobs, updateUserInfo } = require('../controllers/authController');
 const { authenticateJWT } = require('../middleware/authMiddleware');
 
 // /api/auth
@@ -20,10 +20,7 @@ router.post('/saveJobForUser', authenticateJWT, saveJobForUser);
 //GET all saved jobs for user
 router.get('/getUserSavedJobs', authenticateJWT, getUserSavedJobs);
 
-router.put('/updateUserName', authenticateJWT, updateUserName);
-
-router.put('/updateUserBio', authenticateJWT, updateUserBio);
-
-router.put('/updateUserLocation', authenticateJWT, updateUserLocation);
+//PUT update user info
+router.put('/updateUserInfo', authenticateJWT, updateUserInfo);
 
 module.exports = router;
