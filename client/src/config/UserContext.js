@@ -5,6 +5,8 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [savedJobs, setSavedJobs] = useState([]); // Add state for saved jobs
+    // Check if the user is logged in based on the presence of a token
+  const isLoggedIn = !! user;
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -47,13 +49,18 @@ export const UserProvider = ({ children }) => {
     fetchUserData();
   }, []);
 
+  const logout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+  };
+
   // Function to update saved jobs in the context
   const updateSavedJobs = (newJob) => {
     setSavedJobs((prevSavedJobs) => [...prevSavedJobs, newJob]);
   };
 
   return (
-    <UserContext.Provider value={{ user, savedJobs, setUser, setSavedJobs, updateSavedJobs }}>
+    <UserContext.Provider value={{ user, savedJobs, setUser, setSavedJobs, updateSavedJobs, isLoggedIn, logout }}>
       {children}
     </UserContext.Provider>
   );
