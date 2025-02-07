@@ -10,3 +10,4 @@ Instructions:
 2. npm install express mongoose dotenv
 3. npm install --save-dev nodemon
 4. npm install mongodb
+5. client/ npm i
